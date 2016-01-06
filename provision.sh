@@ -1,17 +1,27 @@
 #!/usr/bin/env bash
 export DEBIAN_FRONTEND=noninteractive
 
-sudo aptitude update -q
+sudo apt-get update -q
 
 # Force a blank root password for mysql
 echo "mysql-server mysql-server/root_password password " | debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password " | debconf-set-selections
 
 # Install mysql, nginx, php5-fpm
-sudo aptitude install -q -y -f mysql-server mysql-client nginx php5-fpm
+sudo apt-get install -q -y -f mysql-server mysql-client nginx php5-fpm
 
 # Install commonly used php packages
-sudo aptitude install -q -y -f php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xcache
+sudo apt-get install -q -y -f php5-mysql php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcached php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xcache
+
+# Install Node.js v5
+curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
+sudo apt-get install -q -y -f nodejs build-essential
+
+#Install Gulp
+sudo npm install -g yo gulp bower
+
+# Install Git
+sudo apt-get install -q -y -f git
 
 sudo rm /etc/nginx/sites-available/default
 sudo touch /etc/nginx/sites-available/default
@@ -96,8 +106,10 @@ sudo cat >> /usr/share/nginx/html/info.php <<'EOF'
 <?php phpinfo(); ?>
 EOF
 
-sudo aptitude install -q -y -f phpmyadmin
+sudo apt-get install -q -y -f phpmyadmin
 
 sudo service nginx restart
 
 sudo service php5-fpm restart
+
+ln -s /usr/share/nginx/html/ ~/www
